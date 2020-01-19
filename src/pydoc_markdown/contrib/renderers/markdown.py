@@ -61,12 +61,15 @@ class MarkdownRenderer(Struct):
       self._render_toc(fp, level + 1, child)
 
   def _render_object(self, fp, level, obj):
+
     if self.html_headings:
-      object_id = self._generate_object_id(obj)
       heading_template = '<h{0} id="{1}">{{title}}</h{0}>'.format(level, object_id)
+      fp.write(heading_template.format(title=self._get_title(obj)))
     else:
+      object_id = self._generate_object_id(obj)
+      fp.write('<a name="{}"></a>\n'.format(object_id))
       heading_template = level * '#' + ' {title}'
-    fp.write(heading_template.format(title=self._get_title(obj)))
+      fp.write(heading_template.format(title=self._get_title(obj)))
     fp.write('\n\n')
     if self.signature_code_block and (obj.is_class() or obj.is_function()):
       if obj.is_class():
